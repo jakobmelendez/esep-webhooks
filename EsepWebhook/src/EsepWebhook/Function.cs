@@ -16,12 +16,12 @@ public class Function
     /// <param name="input"></param>
     /// <param name="context"></param>
     /// <returns></returns>
-    public string FunctionHandler(string input, ILambdaContext context)
+    public string FunctionHandler(object input, ILambdaContext context)
     {
         dynamic json = JsonConvert.DeserializeObject<dynamic>(input.ToString());
-
+        
         string payload = $"{{'text':'Issue Created: {json.issue.html_url}'}}";
-
+        
         var client = new HttpClient();
         var webRequest = new HttpRequestMessage(HttpMethod.Post, Environment.GetEnvironmentVariable("SLACK_URL"))
         {
@@ -30,7 +30,7 @@ public class Function
 
         var response = client.Send(webRequest);
         using var reader = new StreamReader(response.Content.ReadAsStream());
-
+            
         return reader.ReadToEnd();
     }
 }
